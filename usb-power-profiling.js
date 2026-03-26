@@ -1102,7 +1102,7 @@ async function tryDevice(device) {
         gDevices.push(dev);
       }
 
-      await dev.startSampling();
+      dev.startSampling();
     } catch(e) {
       console.log(e);
     }
@@ -1121,6 +1121,15 @@ async function tryDevice(device) {
 }
 
 async function startSampling() {
+  if (gSampling) {
+    return;
+  }
+  gSampling = true;
+
+  if (gDevices.length > 0) {
+    return;
+  }
+
   initialize();
 
   startTime = Date.now();
@@ -1136,6 +1145,10 @@ async function startSampling() {
 }
 
 async function stopSampling() {
+  gSampling = false;
+  if (!gClosing) {
+    return;
+  }
   if (gDevices.length == 0) {
     console.log("No device found");
   } else {
@@ -1144,6 +1157,7 @@ async function stopSampling() {
 }
 
 var initialized = false;
+var gSampling = false;
 
 function initialize() {
   if (initialized) {
